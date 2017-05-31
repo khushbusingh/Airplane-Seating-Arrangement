@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Airplane</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  var no_of_passanger = 0;
+  $( function() {
+    $( "#slider-range-max" ).slider({
+      range: "max",
+      min: 0,
+      max: 60,
+      value: 0,
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+        
+        no_of_passanger = $( "#amount" ).val();
+
+        var input = [];
+input.push([2,3]);
+input.push([3,4]);
+input.push([3,2]);
+input.push([4,3]);
+
+
+var mapobj = {
+  'W' : [[],[],[],[],[]],
+  'A' : [[],[],[],[],[]],
+  'S' : [[],[],[],[],[]]
+};
+var first = 0;
+var last = input.length;
+var count = 1;
+for(var i =0 ;i<input.length;i++){
+  var row = input[i][0];
+  var col = input[i][1];
+  for(var m =0 ;m<row;m++){
+    for(var n=0 ; n<col;n++){
+      if(n == 0){
+        if(i == first){
+          mapobj['W'][m].push([i,m,n]);
+        }
+        else{
+          mapobj['A'][m].push([i,m,n]);
+        }
+      }
+      else if(n == col-1){
+        if(i == last-1){
+          mapobj['W'][m].push([i,m,n]);
+        }
+        else{
+          mapobj['A'][m].push([i,m,n]);
+        }
+      }
+      else{
+        
+          mapobj['S'][m].push([i,m,n]);
+      }
+
+    }
+  }
+
+}
+var FinalArrangement = [];
+
+for(var inpt = 0;inpt<input.length;inpt++){
+  var rw = input[inpt][0];
+  var cl = input[inpt][1];
+  var farr = [];
+  for(var i=0;i<rw;i++){
+    var arr = [];
+    for(var j = 0;j<cl;j++){
+      arr.push('-');
+    }
+    console.log(arr);
+    farr.push(arr);
+  }
+  FinalArrangement.push(farr);
+}
+
+
+var Aisle = mapobj['A'];
+
+for(var i=0;i<Aisle.length;i++){
+  for(m=0;m<Aisle[i].length;m++){
+    if(count<=no_of_passanger){
+      FinalArrangement[Aisle[i][m][0]][Aisle[i][m][1]][Aisle[i][m][2]] = count;
+      count++;
+    }
+    else{
+      break;
+    }  
+  }
+}
+
+var Window = mapobj['W'];
+
+
+
+for(var i=0;i<Window.length;i++){
+  for(m=0;m<Window[i].length;m++){
+    if(count<=no_of_passanger){
+      FinalArrangement[Window[i][m][0]][Window[i][m][1]][Window[i][m][2]] = count;
+      count++;
+    }
+    else{
+      break;
+    }
+  }
+}
+var Middle = mapobj['S'];
+for(var i=0;i<Middle.length;i++){
+  for(m=0;m<Middle[i].length;m++){
+    if(count<=no_of_passanger){
+      FinalArrangement[Middle[i][m][0]][Middle[i][m][1]][Middle[i][m][2]] = count;
+      count++;
+    }
+    else{
+      break;
+    }
+  }
+}
+
+var width = 100/(FinalArrangement.length);
+var left = 0;
+var top = 5;
+for(var table_count=0;table_count<FinalArrangement.length;table_count++){
+
+var Rows = input[table_count][0];
+var Cols = input[table_count][1];
+var no_of_tables = table_count+1;
+var newid = "table"+no_of_tables;
+var row_name = "Row"+no_of_tables; 
+var chartContainerid = "chartContainer"+no_of_tables;
+var mainContainer = '<div id='+chartContainerid+' class="chartContainer" style="margin-bottom:10%;margin-left:'+left+'%'+';margin-top:'+top+'%'+';width:'+width+'%'+'"></div>';
+$('#chartContainer'+no_of_tables).empty();
+         var tableData = '<div class="infoTable col-md-12" style="background:#fff;border:1px solid grey;margin-left:4%;width:96.5%;">';
+         tableData += '<div class="row table_head" style="background:#222222;margin-left: -15px;width: 102.5%;margin-top: 4%;"></div>';
+         tableData += '<table class="table table-striped table-bordered table-hover " id='+newid+'><thead style="font-size:smaller"><tr class="tablerow" >';
+         tableData += '<th colspan="4" style="text-align:center;background-color: #428bca;border-color: #357ebd;color:white">'+row_name+'</th>';
+         tableData += '</tr></thead>';
+         tableData += '<tbody style="font-size:smaller;font-weight:200">';
+         for(var i =0 ;i<Rows;i++){
+            var tempData = '<tr id="row'+i+'">';
+            for(var j =0 ;j<Cols;j++){
+                tempData += '<td align="center">'+FinalArrangement[table_count][i][j]+'</td>';
+
+            }
+            tempData += '</tr>';
+            tableData += tempData;
+         }
+         tableData += '</tbody></table>';
+         tableData += '</div>';
+         console.log(no_of_tables);
+        $('#chartContainer'+no_of_tables).append(tableData);
+        $('#container').append(mainContainer);
+        left = left+width+1;
+        top = -5;
+      }
+}
+    });
+    $('#slider-range-max').css('background-color','pink');
+    $('.ui-slider-range').css('background-color','green');
+    $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
+    //console.log(max_passanger);
+  } );
+  </script>
+</head>
+<body>
+ <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="min-height:40px">
+    <div class="col-md-3" style="width:auto;margin-left: 35%;color:#DCDCDC;font-size:135%;font-weight: 600;margin-top: 0.5%;">Airplane Seating Arrangements</div>
+    </div>
+   
+  </div>
+</nav>
+  
+<div class="container" id="container">
+<p>
+  <label for="amount">Minimum number of Passanger:</label>
+  <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+</p>
+<div id="slider-range-max"></div>
+
+
+ </div>
+ 
+</body>
+</html>
